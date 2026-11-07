@@ -1,0 +1,39 @@
+{
+  "method": "Simple random sample of up to 150 companies per size group (seed 42); employees = average employees in latest digital accounts; 95% CI from 5,000 bootstrap resamples.",
+  "groups": {
+    "Micro": {
+      "population": 147800,
+      "sampled": 150,
+      "with_employee_data": 149,
+      "mean_employees": 1.54,
+      "median_employees": 1.0,
+      "jobs_estimate": 227156,
+      "jobs_ci_low": 175574,
+      "jobs_ci_high": 288656
+    },
+    "Small": {
+      "population": 160674,
+      "sampled": 150,
+      "with_employee_data": 149,
+      "mean_employees": 5.05,
+      "median_employees": 2.0,
+      "jobs_estimate": 810918,
+      "jobs_ci_low": 630834,
+      "jobs_ci_high": 1002892
+    },
+    "Medium & large": {
+      "population": 7710,
+      "sampled": 150,
+      "with_employee_data": 85,
+      "mean_employees": 95.11,
+      "median_employees": 40.0,
+      "jobs_estimate": 733266,
+      "jobs_ci_low": 438105,
+      "jobs_ci_high": 1139388
+    }
+  },
+  "total_jobs_estimate": 1771340,
+  "total_jobs_range_note": "Summing group CIs gives a conservative range of 1,244,513 - 2,430,936",
+  "total_ci_low": 1244513,
+  "total_ci_high": 2430936
+}

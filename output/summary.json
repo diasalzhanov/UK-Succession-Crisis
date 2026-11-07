@@ -1,0 +1,27 @@
+{
+  "snapshot": "2026-11-07",
+  "active_private_ltd": 4761802,
+  "trading_companies": 2924554,
+  "owner_type_share_trading": {
+    "Owner-managed": 0.871,
+    "Corporate-owned": 0.1049,
+    "No owner data": 0.0241
+  },
+  "owner_managed_with_age": 2547189,
+  "operating_businesses": 2214033,
+  "operating_owner_65_plus": 316184,
+  "operating_owner_70_plus": 160502,
+  "operating_owner_75_plus": 79532,
+  "pct_65_plus": 0.1428,
+  "pct_70_plus": 0.0725,
+  "median_owner_age": 50.0,
+  "owner_65_plus_no_secured_debt_pct": 0.813,
+  "owner_65_plus_by_size": {
+    "Small": 160674,
+    "Micro": 147800,
+    "Medium & large": 7710,
+    "Unknown": 0
+  },
+  "turning_65_next_10_years": 540872,
+  "real_estate_pct_65_plus": 0.1858
+}
