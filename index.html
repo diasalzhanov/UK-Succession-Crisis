@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The UK Succession Crisis: Region Explorer</title>
+<meta name="description" content="How many UK businesses are run by owners nearing retirement? Explore the results by region. Analysis of 4.7 million Companies House records by Dias Aljanov.">
+<style>
+:root{--bg:#f9f9f7;--card:#fff;--ink:#0b0b0b;--ink2:#52514e;--muted:#7a7974;--line:#e4e3df;--blue:#2a78d6;--orange:#eb6834;
+--s1:#cde2fb;--s2:#9ec5f4;--s3:#6da7ec;--s4:#3987e5;--s5:#1c5cab;--s6:#104281}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--blue)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+header{padding:48px 0 24px}
+.kicker{color:var(--orange);font-weight:700;letter-spacing:.06em;font-size:13px;text-transform:uppercase;margin:0 0 8px}
+h1{font-size:clamp(28px,4.5vw,42px);line-height:1.15;margin:0 0 12px;letter-spacing:-.01em}
+.lede{color:var(--ink2);font-size:18px;max-width:720px;margin:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 8px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat b{display:block;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{color:var(--ink2);font-size:13.5px}
+h2{font-size:22px;margin:40px 0 6px}
+.sub{color:var(--ink2);margin:0 0 18px;font-size:15px}
+.explorer{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.map{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tile{aspect-ratio:1/1;border:2px solid transparent;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;
+padding:6px 7px;font:inherit;text-align:left;color:#fff;transition:transform .12s}
+.tile:hover{transform:translateY(-2px)}
+.tile:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.tile[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px #fff inset}
+.tile .ab{font-weight:700;font-size:13px;line-height:1}
+.tile .pc{font-size:13px;font-variant-numeric:tabular-nums}
+.tile.light{color:var(--ink)}
+.legend{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12.5px;color:var(--ink2);flex-wrap:wrap}
+.ramp{display:flex;height:10px;border-radius:5px;overflow:hidden;width:160px}
+.ramp i{flex:1}
+.mapnote{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.rname{font-size:26px;margin:0;line-height:1.2}
+.big{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:8px 0 2px}
+.big b{font-size:48px;line-height:1;color:var(--orange);font-variant-numeric:tabular-nums}
+.big span{color:var(--ink2);font-size:15px}
+.cmp{font-size:14.5px;margin:0 0 16px;color:var(--ink2)}
+.cmp strong{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.mini{border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.mini b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.mini span{font-size:12.5px;color:var(--ink2)}
+h3{font-size:15px;margin:16px 0 8px}
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar{display:grid;grid-template-columns:minmax(110px,38%) 1fr 48px;gap:8px;align-items:center;font-size:13.5px}
+.bar .track{height:14px;background:#f0efec;border-radius:4px;position:relative;overflow:hidden}
+.bar .fill{height:100%;background:var(--blue);border-radius:0 4px 4px 0}
+.bar .uk{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink2)}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums}
+.ukkey{font-size:12px;color:var(--muted);margin-top:6px}
+.insight{background:#fff6f1;border-left:4px solid var(--orange);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14.5px;margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{background:#f3f2ee;font-weight:600;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none}
+tbody tr{cursor:pointer}
+tbody tr:hover,tbody tr.sel{background:#eef4fc}
+.tablewrap{overflow-x:auto}
+.method{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.method p,.method li{font-size:14.5px;color:var(--ink2)}
+.method ul{padding-left:18px;margin:6px 0}
+footer{margin:48px 0 0;padding:24px 0 40px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-block;padding:9px 16px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14.5px;border:1px solid var(--blue)}
+.btn.p{background:var(--blue);color:#fff}
+@media (max-width:820px){.explorer,.method{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){.tile .ab,.tile .pc{font-size:11px}.big b{font-size:40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<p class="kicker">The UK Succession Crisis</p>
+<h1>Which parts of the UK are most exposed to retiring business owners?</h1>
+<p class="lede">An analysis of all 4.7 million active UK private limited companies on the Companies House register. Click a region to see how many of its owner-managed businesses are run by someone aged 65 or over.</p>
+<div class="stats">
+<div class="stat"><b>316,184</b><span>businesses with a lead owner aged 65+</span></div>
+<div class="stat"><b>14.3%</b><span>of owner-managed operating businesses</span></div>
+<div class="stat"><b>541,000</b><span>more owners turn 65 in the next 10 years</span></div>
+<div class="stat"><b>~1.8m</b><span>jobs depend on these businesses</span></div>
+</div>
+<div class="btns"><a class="btn p" href="report/UK%20Succession%20Crisis%20-%20Report.pdf">Read the full report (PDF)</a><a class="btn" href="https://github.com/diasalzhanov/UK-Succession-Crisis">Code and data on GitHub</a></div>
+</header>
+
+<h2>Region explorer</h2>
+<p class="sub">Darker tiles = a higher share of businesses with a lead owner aged 65+.</p>
+<div class="explorer">
+<div class="card">
+<div class="map" id="map" role="group" aria-label="UK regions"></div>
+<div class="legend"><span>11%</span><div class="ramp" id="ramp"></div><span>18%</span></div>
+<p class="mapnote">Tiles are arranged roughly by geography, not drawn to scale.</p>
+</div>
+<div class="card" id="panel" aria-live="polite"></div>
+</div>
+
+<h2>All regions</h2>
+<p class="sub">Click a column to sort, or a row to open it in the explorer.</p>
+<div class="tablewrap"><table id="tbl"><thead><tr>
+<th data-k="name">Region</th><th data-k="p65">% owner 65+</th><th data-k="o65">Businesses, owner 65+</th><th data-k="businesses">All businesses</th><th data-k="median">Median owner age</th><th data-k="wave">Turning 65 by 2036</th>
+</tr></thead><tbody></tbody></table></div>
+
+<h2>How this was measured</h2>
+<div class="method">
+<div class="card"><p><strong>Data:</strong> Companies House Basic Company Data and the People with Significant Control register (owners' month and year of birth), snapshot November 2026.</p>
+<ul><li><strong>Owner-managed:</strong> at least one individual owner and no company owner.</li>
+<li><strong>Lead owner:</strong> the individual with the largest shareholding; ties go to the older owner.</li>
+<li><strong>Excluded:</strong> dormant, non-trading and subsidiary companies, companies under 2 years old, and property-holding companies.</li></ul></div>
+<div class="card"><p><strong>Limitations</strong></p>
+<ul><li>Region is based on the registered office postcode, which is sometimes an accountant's address, so London may look larger and rural regions smaller.</li>
+<li>An owner aged 65+ may already have a successor planned. This measures exposure, not certain closures.</li>
+<li>Sole traders and partnerships are not on the register.</li></ul></div>
+</div>
+
+<footer>
+<p>Research and analysis by <strong>Dias Aljanov</strong>. The Python code was written by an AI assistant (Claude); I selected the topic, ran the analysis, tested the results at a different age cut-off, and interpreted the findings with AI support.</p>
+<p>Contains public sector information licensed under the Open Government Licence v3.0. Results are aggregates only; no individual-level owner data is published.</p>
+</footer>
+</div>
+<script>
+const D = {"East Midlands":{"businesses":115641,"o65":16873,"o70":8466,"median_age":51.0,"wave10":30085,"no_debt_pct":0.7932,"top_sectors":[["Agriculture",1653,0.3364,556],["Manufacturing",7537,0.2278,1717],["Water & waste",447,0.2148,96],["Finance & insurance",5424,0.1914,1038],["Professional & technical",17211,0.1787,3075]],"largest_sectors":[["Professional & technical",3075],["Wholesale & retail",2527],["Construction",2222]],"size":{"Medium & large":[1011,0.4075],"Micro":[67410,0.1215],"Small":[47220,0.1752]}},"East of England":{"businesses":225805,"o65":34805,"o70":17730,"median_age":51.0,"wave10":56451,"no_debt_pct":0.8181,"top_sectors":[["Agriculture",3585,0.3632,1302],["Manufacturing",11894,0.2201,2618],["Finance & insurance",9361,0.2036,1906],["Professional & technical",35749,0.1828,6534],["Energy",446,0.1704,76]],"largest_sectors":[["Professional & technical",6534],["Construction",5148],["Wholesale & retail",4493]],"size":{"Medium & large":[1518,0.4163],"Micro":[126663,0.1264],"Small":[97624,0.186]}},"London":{"businesses":537182,"o65":59785,"o70":30829,"median_age":48.0,"wave10":106049,"no_debt_pct":0.8321,"top_sectors":[["Mining & quarrying",472,0.2966,140],["Agriculture",1046,0.2075,217],["Finance & insurance",23584,0.2012,4746],["Admin & support",50251,0.1515,7615],["Manufacturing",18037,0.1308,2360]],"largest_sectors":[["Professional & technical",11590],["Admin & support",7615],["Wholesale & retail",7496]],"size":{"Medium & large":[6055,0.4041],"Micro":[331030,0.0861],"Small":[200097,0.144]}},"North East":{"businesses":53985,"o65":7818,"o70":3794,"median_age":50.0,"wave10":13548,"no_debt_pct":0.8107,"top_sectors":[["Agriculture",708,0.3051,216],["Manufacturing",3260,0.2227,726],["Finance & insurance",2092,0.1831,383],["Admin & support",3944,0.162,639],["Professional & technical",9162,0.1576,1444]],"largest_sectors":[["Professional & technical",1444],["Wholesale & retail",1154],["Construction",1068]],"size":{"Medium & large":[421,0.4584],"Micro":[32880,0.1239],"Small":[20684,0.1717]}},"North West":{"businesses":229711,"o65":31281,"o70":15492,"median_age":50.0,"wave10":57195,"no_debt_pct":0.8129,"top_sectors":[["Agriculture",2059,0.2652,546],["Manufacturing",11829,0.2354,2785],["Energy",423,0.2009,85],["Finance & insurance",9055,0.1828,1655],["Water & waste",915,0.1792,164]],"largest_sectors":[["Professional & technical",5956],["Wholesale & retail",4832],["Construction",3819]],"size":{"Medium & large":[1768,0.3886],"Micro":[128545,0.11],"Small":[99398,0.1656]}},"Northern Ireland":{"businesses":37446,"o65":5963,"o70":3171,"median_age":51.0,"wave10":9363,"no_debt_pct":0.7235,"top_sectors":[["Energy",371,0.2803,104],["Agriculture",1293,0.2351,304],["Manufacturing",2888,0.2033,587],["Finance & insurance",1794,0.18,323],["Transport & storage",1143,0.168,192]],"largest_sectors":[["Construction",1089],["Wholesale & retail",1079],["Professional & technical",750]],"size":{"Medium & large":[582,0.4244],"Micro":[22769,0.1268],"Small":[14095,0.2007]}},"Scotland":{"businesses":117262,"o65":18623,"o70":9145,"median_age":52.0,"wave10":31450,"no_debt_pct":0.7885,"top_sectors":[["Energy",525,0.3448,181],["Agriculture",3619,0.2573,931],["Manufacturing",6663,0.208,1386],["Mining & quarrying",1062,0.1949,207],["Professional & technical",19783,0.1886,3731]],"largest_sectors":[["Professional & technical",3731],["Construction",2374],["Wholesale & retail",2312]],"size":{"Medium & large":[974,0.4209],"Micro":[65182,0.1293],"Small":[51106,0.1915]}},"South East":{"businesses":347817,"o65":55179,"o70":27727,"median_age":52.0,"wave10":92684,"no_debt_pct":0.8391,"top_sectors":[["Agriculture",3530,0.2966,1047],["Manufacturing",16397,0.2248,3686],["Finance & insurance",13302,0.2098,2791],["Professional & technical",63868,0.1977,12629],["Admin & support",33265,0.1755,5839]],"largest_sectors":[["Professional & technical",12629],["Construction",7309],["Wholesale & retail",6531]],"size":{"Medium & large":[2313,0.4133],"Micro":[192222,0.1334],"Small":[153282,0.1865]}},"South West":{"businesses":165448,"o65":29301,"o70":15273,"median_age":53.0,"wave10":46360,"no_debt_pct":0.8086,"top_sectors":[["Agriculture",3557,0.3337,1187],["Manufacturing",10186,0.2281,2323],["Finance & insurance",7146,0.2126,1519],["Energy",473,0.2114,100],["Professional & technical",28215,0.2018,5695]],"largest_sectors":[["Professional & technical",5695],["Construction",4020],["Wholesale & retail",3805]],"size":{"Medium & large":[1104,0.4475],"Micro":[90805,0.152],"Small":[73539,0.2041]}},"Wales":{"businesses":70030,"o65":12201,"o70":6440,"median_age":52.0,"wave10":18817,"no_debt_pct":0.7742,"top_sectors":[["Agriculture",1759,0.2871,505],["Manufacturing",4642,0.2333,1083],["Water & waste",396,0.2096,83],["Professional & technical",10111,0.1987,2009],["Finance & insurance",2810,0.1925,541]],"largest_sectors":[["Professional & technical",2009],["Construction",1783],["Wholesale & retail",1770]],"size":{"Medium & large":[525,0.44],"Micro":[37691,0.1458],"Small":[31814,0.2035]}},"West Midlands":{"businesses":164151,"o65":23432,"o70":12038,"median_age":50.0,"wave10":40172,"no_debt_pct":0.8013,"top_sectors":[["Agriculture",1704,0.3005,512],["Manufacturing",10833,0.2504,2713],["Finance & insurance",7217,0.1886,1361],["Professional & technical",23109,0.1802,4165],["Water & waste",716,0.1634,117]],"largest_sectors":[["Professional & technical",4165],["Wholesale & retail",3642],["Construction",2888]],"size":{"Medium & large":[1276,0.3997],"Micro":[95724,0.1154],"Small":[67151,0.1768]}},"Yorkshire & Humber":{"businesses":148660,"o65":20743,"o70":10290,"median_age":51.0,"wave10":38473,"no_debt_pct":0.7887,"top_sectors":[["Agriculture",2109,0.3466,731],["Manufacturing",9945,0.2219,2207],["Energy",302,0.1887,57],["Finance & insurance",6255,0.188,1176],["Water & waste",604,0.1854,112]],"largest_sectors":[["Professional & technical",3553],["Wholesale & retail",3195],["Construction",2800]],"size":{"Medium & large":[1275,0.382],"Micro":[83530,0.1137],"Small":[63855,0.1685]}},"_uk":{"businesses":2214033,"o65":316184,"o70":160502,"median_age":50.0,"wave10":540872,"no_debt_pct":0.813}};
+const UK = D._uk; const ukP = UK.o65 / UK.businesses;
+const POS = {"Scotland":[2,0,"SCO"],"Northern Ireland":[0,1,"NI"],"North East":[3,1,"NE"],"North West":[2,2,"NW"],"Yorkshire & Humber":[3,2,"YH"],
+"Wales":[1,3,"WAL"],"West Midlands":[2,3,"WM"],"East Midlands":[3,3,"EM"],"East of England":[4,3,"EE"],"South West":[1,4,"SW"],"South East":[2,4,"SE"],"London":[3,4,"LON"]};
+const STEPS = ["--s1","--s2","--s3","--s4","--s5","--s6"]; const LO = 0.11, HI = 0.18;
+const regions = Object.keys(POS).map(n => { const r = D[n]; return {name:n, ...r, p65:r.o65/r.businesses, median:r.median_age, wave:r.wave10}; });
+const fmt = n => n.toLocaleString("en-GB"); const pct = (x,d=1) => (x*100).toFixed(d) + "%";
+const step = p => Math.max(0, Math.min(5, Math.floor((p - LO) / (HI - LO) * 6)));
+const ramp = document.getElementById("ramp"); STEPS.forEach(s => { const i = document.createElement("i"); i.style.background = `var(${s})`; ramp.appendChild(i); });
+const map = document.getElementById("map");
+for (let row = 0; row < 5; row++) for (let col = 0; col < 5; col++) {
+  const r = regions.find(x => POS[x.name][0] === col && POS[x.name][1] === row);
+  if (!r) { map.appendChild(document.createElement("div")); continue; }
+  const b = document.createElement("button"); const s = step(r.p65);
+  b.className = "tile" + (s < 2 ? " light" : ""); b.style.background = `var(${STEPS[s]})`;
+  b.dataset.name = r.name; b.setAttribute("aria-pressed", "false");
+  b.setAttribute("aria-label", `${r.name}: ${pct(r.p65)} of businesses have a lead owner aged 65+`);
+  b.innerHTML = `<span class="ab">${POS[r.name][2]}</span><span class="pc">${pct(r.p65,0)}</span>`;
+  b.onclick = () => select(r.name); map.appendChild(b);
+}
+function bars(items, ukv) {
+  const max = Math.max(...items.map(i => i[1]), ukv) * 1.1;
+  return `<div class="bars">${items.map(([l, v, extra]) => `<div class="bar"><span>${l}</span><div class="track"><div class="fill" style="width:${v/max*100}%"></div><div class="uk" style="left:${ukv/max*100}%"></div></div><span class="v">${pct(v,0)}</span></div>`).join("")}</div><div class="ukkey">Grey line = UK average (${pct(ukv,0)})</div>`;
+}
+function select(name) {
+  const r = regions.find(x => x.name === name);
+  document.querySelectorAll(".tile").forEach(t => t.setAttribute("aria-pressed", t.dataset.name === name));
+  document.querySelectorAll("#tbl tbody tr").forEach(t => t.classList.toggle("sel", t.dataset.name === name));
+  const diff = (r.p65 - ukP) * 100; const rank = [...regions].sort((a,b) => b.p65 - a.p65).findIndex(x => x.name === name) + 1;
+  const word = Math.abs(diff) < 0.3 ? "about the same as" : (diff > 0 ? `${Math.abs(diff).toFixed(1)} points above` : `${Math.abs(diff).toFixed(1)} points below`);
+  const sizes = ["Micro","Small","Medium & large"].filter(k => r.size[k]).map(k => [k, r.size[k][1]]);
+  const big = [...regions].sort((a,b) => b.wave - a.wave)[0];
+  let insight = "";
+  if (name === big.name) insight = `Although ${name} has the <strong>lowest share</strong> of older owners, it has the <strong>most owners turning 65</strong> in the next decade (${fmt(r.wave)}), simply because it has so many businesses.`;
+  else if (rank <= 2) insight = `${name} is one of the two most exposed regions. Its most exposed sector is <strong>${r.top_sectors[0][0].toLowerCase()}</strong>, where ${pct(r.top_sectors[0][2],0)} of owner-managed businesses have a lead owner aged 65+.`;
+  else insight = `In ${name}, the sector with the most businesses at risk is <strong>${r.largest_sectors[0][0].toLowerCase()}</strong>, with ${fmt(r.largest_sectors[0][1])} businesses run by a lead owner aged 65+.`;
+  document.getElementById("panel").innerHTML = `
+    <h3 style="margin:0 0 2px;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.05em">Ranked ${rank} of 12</h3>
+    <p class="rname">${name}</p>
+    <div class="big"><b>${pct(r.p65)}</b><span>of owner-managed businesses have a lead owner aged 65+</span></div>
+    <p class="cmp"><strong>${word}</strong> the UK average of ${pct(ukP)}</p>
+    <div class="grid2">
+      <div class="mini"><b>${fmt(r.o65)}</b><span>businesses with an owner aged 65+</span></div>
+      <div class="mini"><b>${fmt(r.o70)}</b><span>with an owner aged 70+</span></div>
+      <div class="mini"><b>${fmt(r.wave)}</b><span>more owners turn 65 by 2036</span></div>
+      <div class="mini"><b>${r.median}</b><span>median lead owner age (UK ${UK.median_age})</span></div>
+    </div>
+    <h3>Most exposed sectors</h3>${bars(r.top_sectors.map(s => [s[0], s[2]]), ukP)}
+    <h3>By company size</h3>${bars(sizes, ukP)}
+    <div class="insight">${insight}</div>`;
+}
+let sortK = "p65", asc = false;
+function table() {
+  const rows = [...regions].sort((a,b) => (sortK === "name" ? a.name.localeCompare(b.name) : a[sortK] - b[sortK]) * (asc ? 1 : -1));
+  document.querySelector("#tbl tbody").innerHTML = rows.map(r => `<tr data-name="${r.name}" tabindex="0"><td>${r.name}</td><td>${pct(r.p65)}</td><td>${fmt(r.o65)}</td><td>${fmt(r.businesses)}</td><td>${r.median}</td><td>${fmt(r.wave)}</td></tr>`).join("") +
+    `<tr style="font-weight:600;cursor:default"><td>United Kingdom</td><td>${pct(ukP)}</td><td>${fmt(UK.o65)}</td><td>${fmt(UK.businesses)}</td><td>${UK.median_age}</td><td>${fmt(UK.wave10)}</td></tr>`;
+  document.querySelectorAll("#tbl tbody tr[data-name]").forEach(tr => { const go = () => { select(tr.dataset.name); document.getElementById("map").scrollIntoView({behavior:"smooth", block:"center"}); };
+    tr.onclick = go; tr.onkeydown = e => { if (e.key === "Enter") go(); }; });
+}
+document.querySelectorAll("#tbl th").forEach(th => th.onclick = () => { const k = th.dataset.k; asc = sortK === k ? !asc : k === "name"; sortK = k; table(); });
+table(); select("South West");
+</script>
+</body>
+</html>
